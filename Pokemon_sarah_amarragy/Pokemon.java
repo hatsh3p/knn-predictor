@@ -1,3 +1,5 @@
+//Bill's comment
+
 package enhancedPokemon;
 
 public class Pokemon implements Comparable<Pokemon>{
