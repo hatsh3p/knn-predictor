@@ -1,6 +1,6 @@
 public class DataPoint {
 	
-	// Step 3: Create a data point class with the following instance variables
+	// (3) Create DataPoint class with the following instance variables
 	private double field1;
 	private double field2;
 	private String label;
@@ -55,6 +55,11 @@ public class DataPoint {
 		this.isATestDataPoint = isATestDataPoint;
 	}
 	
-	
+	public String toString() {
+		return "Field 1: " + this.field1 +
+				", Field 2: " + this.field2 +
+				", Label: " + this.label +
+				", IsATestDataPoint: " + this.isATestDataPoint;
+	}
 	
 }
