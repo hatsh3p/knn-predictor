@@ -1,43 +1,63 @@
 import java.awt.Container;
 import java.awt.*;
-import java.util.ArrayList;
 import javax.swing.*;
-
-// (1) Set up github repo
-// (2) Create directory called DataAnalytics
-
-// (6) Create a driver class
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Main {
-	
-	static double accuracy = -1.0;
-	static double precision = -1.0;
+	private static double accuracy = -0.1;
+	private static double precision = -0.1;
 	
 	public static void main(String[] args) {
-	
-		// Create an instance of DummyPredictor
-		DummyPredictor dummyPredictor = new DummyPredictor();
 		
-		// Create an ArrayList that contains DataPoint
+		System.out.println("Welcome to the KNN Predictor. ");
+		
+		int k = getInput();
+		
+		Predictor knnPredictor = new KNNPredictor(k);
+		
 		ArrayList<DataPoint> dataArrayList = new ArrayList<DataPoint>();
 		
-		// Read data from file
-		dataArrayList = dummyPredictor.readData("trainingdata.txt");
+		dataArrayList = knnPredictor.readData("titanic.csv");
 		
-		// Test code: Print first value in ArrayList
-		// System.out.println(dataArrayList.get(0));
+		accuracy = knnPredictor.getAccuracy(dataArrayList) * 100;
+		precision = knnPredictor.getPrecision(dataArrayList) * 100;
 		
-		// Run test() method
-		dummyPredictor.test(dataArrayList.get(0));
-		
-		// Run getAccuracy() and getPrecision() methods
-		accuracy = dummyPredictor.getAccuracy(dataArrayList);
-		precision = dummyPredictor.getPrecision(dataArrayList);
 		
 		// Call function that displays user-interface
 		SwingUtilities.invokeLater(
 		          new Runnable() { public void run() { initAndShowGUI(); } }
 		        );
+	}
+	
+	public static int getInput() {
+		boolean isValid = false;
+		int result = -1;
+		
+		Scanner scanner = new Scanner(System.in);
+		
+		do {
+			System.out.println("Enter an odd integer: ");
+			
+			if (scanner.hasNextInt()) {
+				result = scanner.nextInt();
+			} else {
+				System.out.println("Error: Invalid input. Please enter an integer.");
+				scanner.nextLine();
+				continue;
+			}
+			
+			if (result % 2 == 0) {
+				System.out.println("Error: Integer entered is even.");
+			} else {
+				isValid = true;
+			}
+		} while (!isValid);
+		
+		scanner.close();
+		
+		return result;
 	}
 	
 	private static void initAndShowGUI() {
@@ -51,15 +71,16 @@ public class Main {
 		contentPane.setPreferredSize(new Dimension(400, 200));
 		
 		// Create and add buttons for accuracy and precision
-		JButton accuracyButton = new JButton("Accuracy: " + accuracy);
-		JButton precisionButton = new JButton("Precision: " + precision);
+		JButton accuracyButton = new JButton("Accuracy: " + String.format("%.0f", accuracy) + "%");
+		JButton precisionButton = new JButton("Precision: " + String.format("%.0f", precision) + "%");
+		
 		contentPane.add(accuracyButton);
 		contentPane.add(precisionButton);
 		
 		// Realize and display window with a title
 		dataFrame.pack();
 		dataFrame.setVisible(true);
-		dataFrame.setTitle("DummyPredictor's calculations: ");
+		dataFrame.setTitle("KNN Predictor calculations: ");
 		
 	}
 }

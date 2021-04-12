@@ -1,21 +1,20 @@
 public class DataPoint {
 	
-	// (3) Create DataPoint class with the following instance variables
-	private double field1;
-	private double field2;
-	private String label;
+	private double field1; // age (column 5)
+	private double field2; // fare (column 6)
+	private int label; // initially, label was a String type
 	private boolean isATestDataPoint;
 	
 	// Constructor, no arg
 	public DataPoint() {
 		this.field1 = 0;
 		this.field2 = 0;
-		this.label = "";
+		this.label = 0; 
 		this.isATestDataPoint = false; 
 	}
 
 	// Constructor with four arguments
-	public DataPoint(double field1, double field2, String label, boolean isATestDataPoint) {
+	public DataPoint(double field1, double field2, int label, boolean isATestDataPoint) {
 		this.field1 = field1;
 		this.field2 = field2;
 		this.label = label;
@@ -39,11 +38,11 @@ public class DataPoint {
 		this.field2 = field2;
 	}
 
-	public String getLabel() {
+	public int getLabel() {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(int label) {
 		this.label = label;
 	}
 
