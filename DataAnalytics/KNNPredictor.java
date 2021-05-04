@@ -17,7 +17,7 @@ public class KNNPredictor extends Predictor { //KNN stands for K-nearest-neighbo
 	private static int SURVIVED = 0;
 	private static int DECEASED = 1;
 
-	private ArrayList<DataPoint> dataSet = new ArrayList<DataPoint>();
+	private ArrayList<DataPoint> dataSet;
 	
 	private int numOfPassengersSurvived = 0;
 	private int numOfPassengersDeceased = 0;
@@ -129,6 +129,7 @@ public class KNNPredictor extends Predictor { //KNN stands for K-nearest-neighbo
 				"\nNumber of passengers who survived: " + numOfPassengersSurvived + 
 				"\nNumber of passengers deceased: " + numOfPassengersDeceased);
 
+		dataSet = result;
 		return result;
 	}
 	
@@ -252,7 +253,7 @@ public class KNNPredictor extends Predictor { //KNN stands for K-nearest-neighbo
 				}
 			}
 		}
-		
+
 		return result;
 	}
 	
