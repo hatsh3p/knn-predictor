@@ -127,7 +127,7 @@ public class KNNPredictor extends Predictor { //KNN stands for K-nearest-neighbo
 				"\nTotal test data: " + ((lineNumber - unusedRecords) - (numOfPassengersSurvived + numOfPassengersDeceased)) +
 				"\nThe training data contains: " +
 				"\nNumber of passengers who survived: " + numOfPassengersSurvived + 
-				"\nNumber of passengers deceased: " + numOfPassengersDeceased);
+				"\nNumber of passengers deceased: " + numOfPassengersDeceased + "\n");
 
 		dataSet = result;
 		return result;
