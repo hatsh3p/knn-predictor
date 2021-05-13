@@ -8,20 +8,25 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Graph extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private int labelPadding = 40;
 	private Color lineColor = new Color(255, 255, 254);
-;
 	private Color blue = new Color(0, 0, 255); // truePositive
 	private Color cyan = new Color(0, 255, 255); // falsePositive
 	private Color yellow = new Color(255, 255, 0); // falseNegative
@@ -36,7 +41,7 @@ public class Graph extends JPanel {
 	private int numXGridLines = 6;
 	private int numYGridLines = 6;
 	private int padding = 40;
-	
+
 	private static double accuracy = -0.1;
 	private static double precision = -0.1;
 
@@ -45,15 +50,15 @@ public class Graph extends JPanel {
 	private KNNPredictor knnPredictor;
 
 	public Graph(int K, String fileName) {
-
+		setKAndRedraw(K, fileName);
+	}
+	
+	public void setKAndRedraw(int K, String fileName) {
 		knnPredictor = new KNNPredictor(K);
-		this.data = knnPredictor.readData(fileName);
-		
-		// Can move this to where Frame is created 
+		data = knnPredictor.readData(fileName);
+
 		accuracy = knnPredictor.getAccuracy(data) * 100;
 		precision = knnPredictor.getPrecision(data) * 100;
-
-	
 	}
 
 	@Override
@@ -159,7 +164,6 @@ public class Graph extends JPanel {
 			g2.fillOval(x, y, ovalW, ovalH);
 
 		}
-		
 
 	}
 
@@ -217,10 +221,12 @@ public class Graph extends JPanel {
 	 * Run createAndShowGui in the main method, where we create the frame too and
 	 * pack it in the panel
 	 */
+	
 	private static void createAndShowGui(int K, String fileName) {
 
 		/* Main panel */
-		Graph mainPanel = new Graph(K, fileName);
+		int value = K;
+		Graph mainPanel = new Graph(value, fileName);
 
 		mainPanel.setPreferredSize(new Dimension(700, 600));
 		
@@ -230,10 +236,53 @@ public class Graph extends JPanel {
 
 		JButton accuracyButton = new JButton("Accuracy: " + String.format("%.0f", accuracy) + "%");
 		JButton precisionButton = new JButton("Precision: " + String.format("%.0f", precision) + "%");
+		JLabel label = new JLabel("Choose a new K value");
+		
+		// Slider
+		int MIN = 2;
+		int MAX = 25;
+		int MAJOR_SPACING = 5;
+		int MINOR_SPACING = 1;
+		int INITIAL = K;
+		
+		JSlider slider = new JSlider(JSlider.HORIZONTAL, MIN, MAX, INITIAL);
+		
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				if (!source.getValueIsAdjusting()) {
+					int updatedValue = source.getValue();
+					updatedValue = (updatedValue * 2) + 1;
+					mainPanel.setKAndRedraw(updatedValue, fileName);
+					mainPanel.repaint();
+					accuracyButton.setText("Accuracy: " + String.format("%.0f", accuracy) + "%");
+					precisionButton.setText("Precision: " + String.format("%.0f", precision) + "%");
+				}
+			}
+		});
+		
+		slider.setMajorTickSpacing(MAJOR_SPACING);
+		slider.setMinorTickSpacing(MINOR_SPACING);
+		slider.setPaintTicks(true);
+		
+		Hashtable sliderLabels = new Hashtable();
+		sliderLabels.put(new Integer(MIN), new JLabel("2"));
+		sliderLabels.put(new Integer(MAJOR_SPACING), new JLabel("5"));
+		sliderLabels.put(new Integer(10), new JLabel("10"));
+		sliderLabels.put(new Integer(15), new JLabel("15"));
+		sliderLabels.put(new Integer(20), new JLabel("20"));
+		sliderLabels.put(new Integer(MAX), new JLabel("25"));
+		slider.setLabelTable(sliderLabels);
+		slider.setPaintLabels(true);
+		
+		
 		contentPane.add(accuracyButton, BorderLayout.LINE_START);
 		contentPane.add(precisionButton, BorderLayout.LINE_END);
+		contentPane.add(label, BorderLayout.PAGE_END);
+		contentPane.add(slider, BorderLayout.AFTER_LAST_LINE);
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(mainPanel, BorderLayout.PAGE_END);
+		frame.getContentPane().add(mainPanel, BorderLayout.PAGE_START);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -243,24 +292,24 @@ public class Graph extends JPanel {
 	public static void main(String[] args) {
 		int K = getInput(); // A value of K selected
 		String fileName = "titanic.csv"; // TODO: Change this to titanic.csv
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGui(K, fileName);
 			}
 		});
 	}
-	
+
 	public static int getInput() {
 		boolean isValid = false;
 		int result = -1;
-		
+
 		System.out.println("Welcome to the Graphical KNNPredictor.");
 		Scanner scanner = new Scanner(System.in);
-		
+
 		do {
 			System.out.println("Enter an odd integer (k-value): ");
-			
+
 			if (scanner.hasNextInt()) {
 				result = scanner.nextInt();
 			} else {
@@ -268,16 +317,16 @@ public class Graph extends JPanel {
 				scanner.nextLine();
 				continue;
 			}
-			
+
 			if (result % 2 == 0) {
 				System.out.println("Error: Integer entered is even.");
 			} else {
 				isValid = true;
 			}
 		} while (!isValid);
-		
+
 		scanner.close();
-		
+
 		return result;
 	}
 }
